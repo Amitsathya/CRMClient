@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: white;
+  color: black;
+  font-family: arial, helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.MuiBox-root {
+  margin-left: 10px;
+}
+
+.css-t89xny-MuiDataGrid-columnHeaderTitle {
+  font-weight: 600 !important;
+}
+
+tr {
+  height: 10px;
+}
+
+tr td {
+  height: auto !important;
+}
