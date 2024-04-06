@@ -166,13 +166,13 @@ export default function Customer() {
       field: 'fName',
       headerName: 'First Name',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'lName',
       headerName: 'Last Name',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'age',
@@ -181,13 +181,13 @@ export default function Customer() {
       flex: 1,
       align: 'left',
       headerAlign: 'left',
-      editable: true,
+      editable: false,
     },
     {
       field: 'sex',
       headerName: 'Sex',
       flex: 1,
-      editable: true,
+      editable: false,
       type: 'singleSelect',
       valueOptions: ['Male', 'Female', 'Other'],
     },
@@ -195,13 +195,13 @@ export default function Customer() {
       field: 'city',
       headerName: 'City',
       flex: 1,
-      editable: true,
+      editable: false,
     },
     {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      editable: true,
+      editable: false,
       type: 'number',
       renderCell: (params) => {
         const statusValue = params.value
@@ -215,7 +215,7 @@ export default function Customer() {
       flex: 2,
       align: 'left',
       headerAlign: 'left',
-      editable: true,
+      editable: false,
     },
     {
       field: 'actions',

@@ -196,17 +196,17 @@ export default function Feedback() {
       field: 'customerName',
       headerName: 'Customer Name',
       flex: 2,
-      editable: true,
+      editable: false,
       valueGetter: (params) =>
         `${params.row.fName || ''} ${params.row.lName || ''}`,
     },
-    { field: 'feedback', headerName: 'Feedback', flex: 3, editable: true },
+    { field: 'feedback', headerName: 'Feedback', flex: 3, editable: false },
     {
       field: 'rating',
       headerName: 'Rating',
       type: 'number',
       flex: 1,
-      editable: true,
+      editable: false,
     },
     {
       field: 'actions',

@@ -34,6 +34,7 @@ const AssignModal = ({ props }) => {
     employeeId: '',
     serviceId: '',
     status: 1,
+    notes: '',
   })
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
@@ -54,6 +55,7 @@ const AssignModal = ({ props }) => {
       employeeId: '',
       serviceId: '',
       status: 1,
+      notes: '',
     })
   }
 
@@ -98,6 +100,7 @@ const AssignModal = ({ props }) => {
           employeeId: data.employeeId,
           serviceId: data.serviceId,
           status: 1,
+          notes: data.notes,
         })
       })
     } catch (error) {
@@ -142,7 +145,7 @@ const AssignModal = ({ props }) => {
                 <h2>Active Visit: {props.visitId}</h2>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth disabled>
                       <InputLabel id="customerId-label">Customer</InputLabel>
                       <Select
                         labelId="customerId-label"
@@ -189,6 +192,20 @@ const AssignModal = ({ props }) => {
                       }}
                     />
                   </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      disabled
+                      id="outlined-multiline-static"
+                      label="Notes"
+                      multiline
+                      rows={4}
+                      value={visitData.notes}
+                      onChange={(e) =>
+                        handleInputChange('notes', e.target.value)
+                      }
+                      style={{ width: '100%', fontSize: '1rem' }}
+                    />
+                  </Grid>{' '}
                   <Grid item xs={12}>
                     <Divider variant="middle" style={{ marginTop: '1vh' }} />
                   </Grid>

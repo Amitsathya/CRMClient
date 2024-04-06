@@ -15,6 +15,7 @@ import RegisterModal from './modals/RegisterModal'
 import axios from 'axios'
 import AssignModal from './modals/AssignModal'
 import CompleteModal from './modals/CompleteModal'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 
 function EditToolbar({ setOpen }) {
   const handleClick = () => {
@@ -46,7 +47,7 @@ export default function VisitTab() {
 
   useEffect(() => {
     getVisits()
-  }, [open])
+  }, [open, openActive, openComplete])
 
   const getVisits = async () => {
     try {
@@ -125,7 +126,7 @@ export default function VisitTab() {
       field: 'customerId',
       headerName: 'Customer',
       flex: 1,
-      editable: true,
+      editable: false,
       valueGetter: (params) =>
         `${params.row.customerfName || ''} ${params.row.customerlName || ''}`,
     },
@@ -133,7 +134,7 @@ export default function VisitTab() {
       field: 'employeeId',
       headerName: 'Employee',
       flex: 1,
-      editable: true,
+      editable: false,
       valueGetter: (params) =>
         `${params.row.employeefName || ''} ${params.row.employeelName || ''}`,
     },
@@ -141,15 +142,15 @@ export default function VisitTab() {
       field: 'feedbackId',
       headerName: 'Feedback',
       flex: 1,
-      editable: true,
+      editable: false,
     },
-    { field: 'itemId', headerName: 'Item', flex: 1, editable: true },
-    { field: 'serviceName', headerName: 'Service', flex: 1, editable: true },
+    { field: 'itemId', headerName: 'Item', flex: 1, editable: false },
+    { field: 'serviceName', headerName: 'Service', flex: 1, editable: false },
     {
       field: 'visitDate',
       headerName: 'Visit Date',
       flex: 2,
-      editable: true,
+      editable: false,
       valueFormatter: (params) => {
         const visitDate = new Date(params.value)
         const hours = visitDate.getHours()
@@ -169,10 +170,39 @@ export default function VisitTab() {
       },
     },
     {
+      field: 'endDate',
+      headerName: 'Visit End Date',
+      flex: 2,
+      editable: false,
+      valueFormatter: (params) => {
+        const visitDate = new Date(params.value)
+        const hours = visitDate.getHours()
+        const minutes = visitDate.getMinutes()
+        const ampm = hours >= 12 ? 'PM' : 'AM'
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12
+        const formattedMinutes = minutes.toString().padStart(2, '0')
+        return `${(visitDate.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}/${visitDate
+          .getDate()
+          .toString()
+          .padStart(
+            2,
+            '0'
+          )}/${visitDate.getFullYear()} ${formattedHours}:${formattedMinutes} ${ampm}`
+      },
+    },
+    {
+      field: 'duration',
+      headerName: 'Duration',
+      flex: 1,
+      editable: false,
+    },
+    {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      editable: true,
+      editable: false,
       renderCell: (params) => {
         const statusValue = params.value
         let statusLabel = ''
@@ -205,40 +235,58 @@ export default function VisitTab() {
       cellClassName: 'actions',
       getActions: ({ id, row }) => {
         const { status } = row
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
+        const actions = []
 
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: 'primary.main',
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ]
+        if (status === 0) {
+          actions.push(
+            <Tooltip title="Edit">
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                className="textPrimary"
+                onClick={handleEditClick(id)}
+                color="inherit"
+              />
+            </Tooltip>
+          )
+        } else if (status === 1) {
+          actions.push(
+            <React.Fragment>
+              <Tooltip title="Edit">
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="Edit"
+                  className="textPrimary"
+                  onClick={handleEditClick(id)}
+                  color="inherit"
+                />
+              </Tooltip>
+              <Tooltip title="Finish">
+                <GridActionsCellItem
+                  icon={<TaskAltIcon />}
+                  label="Finish"
+                  className="textPrimary"
+                  onClick={handleCompleteClick(id)}
+                  color="inherit"
+                />
+              </Tooltip>
+            </React.Fragment>
+          )
+        } else if (status === 2) {
+          actions.push(
+            <Tooltip title="View">
+              <GridActionsCellItem
+                icon={<VisibilityIcon />}
+                label="View"
+                className="textPrimary"
+                onClick={handleCompleteClick(id)}
+                color="inherit"
+              />
+            </Tooltip>
+          )
         }
 
-        let voidIcon = <TaskAltIcon />
-
-        return [
-          <Tooltip title="Edit">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit"
-              className="textPrimary"
-              onClick={handleEditClick(id)}
-              color="inherit"
-            />
-          </Tooltip>,
+        actions.push(
           <Tooltip title="Delete">
             <GridActionsCellItem
               icon={<DeleteIcon />}
@@ -246,17 +294,10 @@ export default function VisitTab() {
               onClick={handleDeleteClick(id)}
               color="inherit"
             />
-          </Tooltip>,
-          <Tooltip title="Finish">
-            <GridActionsCellItem
-              icon={voidIcon}
-              label="Void"
-              className="textPrimary"
-              onClick={handleCompleteClick(id)}
-              color="inherit"
-            />
-          </Tooltip>,
-        ]
+          </Tooltip>
+        )
+
+        return actions
       },
     },
   ]

@@ -33,11 +33,12 @@ const CompleteModal = ({ props }) => {
     visitId: '',
     itemId: '',
     visitDate: new dayjs(Date()),
-    visitEndDate: new dayjs(Date()),
+    endDate: new dayjs(Date()),
     employeeId: '',
     serviceId: '',
-    inventoryQuantity: '',
+    itemQuantity: '',
     notes: '',
+    duration: '',
     status: 2,
   })
   const theme = useTheme()
@@ -57,31 +58,59 @@ const CompleteModal = ({ props }) => {
       phone: '',
       itemId: '',
       visitDate: new dayjs(Date()),
-      visitEndDate: new dayjs(Date()),
+      endDate: new dayjs(Date()),
       employeeId: '',
       serviceId: '',
-      inventoryQuantity: '',
+      itemQuantity: '',
+      duration: '',
       notes: '',
       status: 2,
     })
   }
 
   const handleInputChange = (field, value) => {
+    console.log(field, value)
     if (field === 'customerId') {
       const selectedCustomer = customerOptions.find(
         (customer) => customer.customerId === value
       )
-      console.log(selectedCustomer)
       setVisitData({
         ...visitData,
         [field]: value,
         phone: selectedCustomer ? selectedCustomer.phone : '',
       })
+    }
+
+    if (field === 'endDate') {
+      setVisitData({
+        ...visitData,
+        [field]: value,
+        duration: calculateDuration(visitData.visitDate, value),
+      })
     } else {
-      setVisitData({ ...visitData, [field]: value })
+      setVisitData({
+        ...visitData,
+        [field]: value,
+      })
     }
   }
 
+  const calculateDuration = (visitDate, endDate) => {
+    const startDate = new Date(visitDate)
+    const endDateTime = new Date(endDate)
+
+    let duration = Math.abs(endDateTime - startDate)
+
+    const days = Math.floor(duration / (1000 * 60 * 60 * 24))
+    duration -= days * (1000 * 60 * 60 * 24)
+
+    const hours = Math.floor(duration / (1000 * 60 * 60))
+    duration -= hours * (1000 * 60 * 60)
+
+    const minutes = Math.floor(duration / (1000 * 60))
+
+    return `${days} days, ${hours} hours, ${minutes} minutes`
+  }
   const updateVisit = async () => {
     try {
       await axios.post(`${url}/updateVisit`, visitData).then((response) => {
@@ -104,12 +133,15 @@ const CompleteModal = ({ props }) => {
           visitId: data.visitId,
           phone: selectedCustomer ? selectedCustomer.phone : '',
           visitDate: new dayjs(data.visitDate),
-          visitEndDate: new dayjs(data.visitEndDate),
+          endDate: data.endDate
+            ? new dayjs(data.endDate)
+            : new dayjs(new Date()),
           employeeId: data.employeeId,
           serviceId: data.serviceId,
           itemId: data.itemId,
-          inventoryQuantity: data.inventoryQuantity,
+          itemQuantity: data.itemQuantity,
           notes: data.notes,
+          duration: calculateDuration(data.visitDate, data.endDate),
           status: 2,
         })
       })
@@ -157,7 +189,7 @@ const CompleteModal = ({ props }) => {
                 <h2>Active Visit: {props.visitId}</h2>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth disabled>
                       <InputLabel id="customerId-label">Customer</InputLabel>
                       <Select
                         labelId="customerId-label"
@@ -204,11 +236,24 @@ const CompleteModal = ({ props }) => {
                       }}
                     />
                   </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="Notes"
+                      multiline
+                      rows={4}
+                      value={visitData.notes}
+                      onChange={(e) =>
+                        handleInputChange('notes', e.target.value)
+                      }
+                      style={{ width: '100%', fontSize: '1rem' }}
+                    />
+                  </Grid>{' '}
                   <Grid item xs={12}>
                     <Divider variant="middle" style={{ marginTop: '1vh' }} />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth disabled>
                       <InputLabel id="employeeId-label">Employee</InputLabel>
                       <Select
                         labelId="employeeId-label"
@@ -230,7 +275,7 @@ const CompleteModal = ({ props }) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth disabled>
                       <InputLabel id="serviceId-label">Service</InputLabel>
                       <Select
                         labelId="serviceId-label"
@@ -278,34 +323,19 @@ const CompleteModal = ({ props }) => {
                       label="Inventory Quantity"
                       variant="outlined"
                       fullWidth
-                      value={visitData.inventoryQuantity}
+                      value={visitData.itemQuantity}
                       onChange={(e) =>
-                        handleInputChange('inventoryQuantity', e.target.value)
+                        handleInputChange('itemQuantity', e.target.value)
                       }
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      id="outlined-multiline-static"
-                      label="Notes"
-                      multiline
-                      rows={4}
-                      value={visitData.notes}
-                      onChange={(e) =>
-                        handleInputChange('notes', e.target.value)
-                      }
-                      style={{ width: '100%', fontSize: '1rem' }}
-                    />
-                  </Grid>{' '}
                   <Grid item xs={12} md={6}>
                     <DateTimePicker
                       label="End Time"
                       variant="outlined"
                       fullWidth
-                      value={visitData.visitEndDate}
-                      onChange={(value) =>
-                        handleInputChange('visitEndDate', value)
-                      }
+                      value={visitData.endDate}
+                      onChange={(value) => handleInputChange('endDate', value)}
                       InputLabelProps={{
                         shrink: true,
                       }}

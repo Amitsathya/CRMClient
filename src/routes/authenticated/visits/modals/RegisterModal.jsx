@@ -30,6 +30,7 @@ const RegisterModal = ({ props }) => {
     customerId: '',
     phone: '',
     visitDate: new dayjs(Date()),
+    notes: '',
   })
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
@@ -58,6 +59,7 @@ const RegisterModal = ({ props }) => {
         ...visitData,
         [field]: value,
         phone: selectedCustomer ? selectedCustomer.phone : '',
+        notes: selectedCustomer ? selectedCustomer.notes : '',
       })
     } else {
       setVisitData({ ...visitData, [field]: value })
@@ -154,6 +156,20 @@ const RegisterModal = ({ props }) => {
                       }}
                     />
                   </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      disabled
+                      id="outlined-multiline-static"
+                      label="Notes"
+                      multiline
+                      rows={4}
+                      value={visitData.notes}
+                      onChange={(e) =>
+                        handleInputChange('notes', e.target.value)
+                      }
+                      style={{ width: '100%', fontSize: '1rem' }}
+                    />
+                  </Grid>{' '}
                   {/* Rest of the form fields */}
                   <Grid item xs={12}>
                     <Button

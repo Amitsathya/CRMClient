@@ -164,25 +164,25 @@ export default function Employee() {
       field: 'fName',
       headerName: 'First Name',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'lName',
       headerName: 'Last Name',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'position',
       headerName: 'Position',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'department',
       headerName: 'Department',
       flex: 2,
-      editable: true,
+      editable: false,
     },
     {
       field: 'salary',
@@ -191,13 +191,13 @@ export default function Employee() {
       flex: 1,
       align: 'left',
       headerAlign: 'left',
-      editable: true,
+      editable: false,
     },
     {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      editable: true,
+      editable: false,
       type: 'number',
       renderCell: (params) => {
         const statusValue = params.value

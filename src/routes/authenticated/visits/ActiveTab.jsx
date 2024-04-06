@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Close'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import TaskAltIcon from '@mui/icons-material/TaskAlt'
@@ -71,19 +72,6 @@ export default function ActiveTab() {
     }
   }
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true
-    }
-  }
-
-  const handleSaveClick = (visitId) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [visitId]: { mode: GridRowModes.View },
-    })
-  }
-
   const handleCompleteClick = (visitId) => () => {
     setOpenComplete(true)
     setVisitId(visitId)
@@ -96,18 +84,6 @@ export default function ActiveTab() {
 
   const handleDeleteClick = (visitId) => () => {
     deleteVisit(visitId)
-  }
-
-  const handleCancelClick = (visitId) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [visitId]: { mode: GridRowModes.View, ignoreModifications: true },
-    })
-
-    const editedRow = rows.find((row) => row.visitId === visitId)
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.visitId !== visitId))
-    }
   }
 
   const processRowUpdate = (newRow) => {
@@ -128,7 +104,7 @@ export default function ActiveTab() {
       field: 'customerId',
       headerName: 'Customer',
       flex: 1,
-      editable: true,
+      editable: false,
       valueGetter: (params) =>
         `${params.row.customerfName || ''} ${params.row.customerlName || ''}`,
     },
@@ -136,7 +112,7 @@ export default function ActiveTab() {
       field: 'employeeId',
       headerName: 'Employee',
       flex: 1,
-      editable: true,
+      editable: false,
       valueGetter: (params) =>
         `${params.row.employeefName || ''} ${params.row.employeelName || ''}`,
     },
@@ -144,15 +120,15 @@ export default function ActiveTab() {
       field: 'feedbackId',
       headerName: 'Feedback',
       flex: 1,
-      editable: true,
+      editable: false,
     },
-    { field: 'itemId', headerName: 'Item', flex: 1, editable: true },
-    { field: 'serviceName', headerName: 'Service', flex: 1, editable: true },
+    { field: 'itemId', headerName: 'Item', flex: 1, editable: false },
+    { field: 'serviceName', headerName: 'Service', flex: 1, editable: false },
     {
       field: 'visitDate',
       headerName: 'Visit Date',
       flex: 2,
-      editable: true,
+      editable: false,
       valueFormatter: (params) => {
         const visitDate = new Date(params.value)
         const hours = visitDate.getHours()
@@ -175,7 +151,7 @@ export default function ActiveTab() {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      editable: true,
+      editable: false,
       renderCell: (params) => {
         const statusValue = params.value
         let statusLabel = ''
@@ -208,31 +184,8 @@ export default function ActiveTab() {
       cellClassName: 'actions',
       getActions: ({ id, row }) => {
         const { status } = row
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
 
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: 'primary.main',
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ]
-        }
-
-        let voidIcon = <TaskAltIcon />
-
-        return [
+        const actions = [
           <Tooltip title="Edit">
             <GridActionsCellItem
               icon={<EditIcon />}
@@ -242,6 +195,35 @@ export default function ActiveTab() {
               color="inherit"
             />
           </Tooltip>,
+        ]
+
+        if (status === 1) {
+          actions.push(
+            <Tooltip title="Finish">
+              <GridActionsCellItem
+                icon={<TaskAltIcon />}
+                label="Finish"
+                className="textPrimary"
+                onClick={handleCompleteClick(id)}
+                color="inherit"
+              />
+            </Tooltip>
+          )
+        } else if (status === 2) {
+          actions.push(
+            <Tooltip title="View">
+              <GridActionsCellItem
+                icon={<VisibilityIcon />}
+                label="View"
+                className="textPrimary"
+                onClick={handleCompleteClick(id)}
+                color="inherit"
+              />
+            </Tooltip>
+          )
+        }
+
+        actions.push(
           <Tooltip title="Delete">
             <GridActionsCellItem
               icon={<DeleteIcon />}
@@ -249,17 +231,10 @@ export default function ActiveTab() {
               onClick={handleDeleteClick(id)}
               color="inherit"
             />
-          </Tooltip>,
-          <Tooltip title="Finish">
-            <GridActionsCellItem
-              icon={voidIcon}
-              label="Void"
-              className="textPrimary"
-              onClick={handleCompleteClick(id)}
-              color="inherit"
-            />
-          </Tooltip>,
-        ]
+          </Tooltip>
+        )
+
+        return actions
       },
     },
   ]
@@ -282,10 +257,9 @@ export default function ActiveTab() {
         getRowHeight={() => 'auto'}
         rows={rows}
         columns={columns}
-        editMode="row"
+        isCellEditable={false}
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
         getRowId={(row) => row.visitId}
         slots={{
           toolbar: () => <EditToolbar setOpen={setOpen} />,

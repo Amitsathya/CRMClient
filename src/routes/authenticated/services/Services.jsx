@@ -197,27 +197,27 @@ const Services = () => {
       field: 'name',
       headerName: 'Service Name',
       flex: 2,
-      editable: true,
+      editable: false,
     },
-    { field: 'category', headerName: 'Category', flex: 2, editable: true },
+    { field: 'category', headerName: 'Category', flex: 2, editable: false },
     {
       field: 'description',
       headerName: 'Description',
       flex: 3,
-      editable: true,
+      editable: false,
     },
     {
       field: 'price',
       headerName: 'Price',
       type: 'number',
       flex: 1,
-      editable: true,
+      editable: false,
     },
     {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      editable: true,
+      editable: false,
       type: 'number',
       renderCell: (params) => {
         const statusValue = params.value
