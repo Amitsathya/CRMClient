@@ -145,7 +145,7 @@ const AssignModal = ({ props }) => {
                 <h2>Active Visit: {props.visitId}</h2>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth disabled>
+                    <FormControl fullWidth>
                       <InputLabel id="customerId-label">Customer</InputLabel>
                       <Select
                         labelId="customerId-label"
@@ -168,7 +168,6 @@ const AssignModal = ({ props }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      disabled
                       label="Mobile Number"
                       variant="outlined"
                       fullWidth
@@ -194,7 +193,6 @@ const AssignModal = ({ props }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      disabled
                       id="outlined-multiline-static"
                       label="Notes"
                       multiline

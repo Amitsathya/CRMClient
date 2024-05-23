@@ -132,7 +132,6 @@ const RegisterModal = ({ props }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      disabled
                       label="Mobile Number"
                       variant="outlined"
                       fullWidth
@@ -158,7 +157,6 @@ const RegisterModal = ({ props }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      disabled
                       id="outlined-multiline-static"
                       label="Notes"
                       multiline
